@@ -47,7 +47,23 @@ st.set_page_config(
     layout="centered"
 )
 
+
+speed_options = {
+        "0.5X": 0.5,
+        "0.75X": 0.75,
+        "1X": 1.0,
+        "1.25X": 1.25,
+        "1.5X": 1.5,
+        "2X": 2.0,
+        "3X": 3.0,
+    }
+
+if 'speed' not in st.session_state:
+    st.session_state.speed = "1.5X"
+
+
 st.markdown("##### YouTube 字幕翻译成中文 🎥")
+
 
 
 # 输入 YouTube URL
@@ -63,6 +79,7 @@ with col2:
 
 with col3:
     read_checkbox = st.checkbox("朗读", value=True)
+
     
 if translate_button:
     if not youtube_url:
@@ -83,28 +100,14 @@ if translate_button:
                 
                 if result.returncode == 0:
                     translation = read_translation_result()
-                    if translation:
-                        st.success("翻译完成")
+                    if translation:                        
                         st.text_area(
                             label="译文",
                             value=translation,
                             height=400
                         )
+                        st.success("翻译完成")
 
-                        if read_checkbox:
-                            text = escape_text_for_js(translation)
-                            js_code = f"""
-                                <script>
-                                    function speak() {{
-                                        const utterance = new SpeechSynthesisUtterance("{text}");
-                                        utterance.lang = 'zh-CN';
-                                        window.speechSynthesis.speak(utterance);
-                                    }}
-                                    speak();
-                                </script>
-                            """
-                            html(js_code)
-                        
                         # 提供下载按钮
                         st.download_button(
                             label="下载字幕",
@@ -113,6 +116,24 @@ if translate_button:
                             mime="text/plain",
                             use_container_width=True
                         )
+
+                        if read_checkbox:
+                            text = escape_text_for_js(translation)
+                            speed_value = speed_options[st.session_state.speed]
+                            js_code = f"""
+                                <script>
+                                    function speak() {{
+                                        const utterance = new SpeechSynthesisUtterance("{text}");
+                                        utterance.lang = 'zh-CN';
+                                        utterance.rate = {speed_value};
+                                        window.speechSynthesis.speak(utterance);
+                                    }}
+                                    speak();
+                                </script>
+                            """
+                            html(js_code)
+                        
+                        
                     else:
                         st.warning("翻译失败，请重试")
                 else:
@@ -124,12 +145,20 @@ if translate_button:
             except Exception as e:
                 st.error(f"发生错误：{str(e)}")
 
-
+st.markdown("---")
+st.markdown("""#### 设置""")
+if read_checkbox:    
+    st.session_state.speed = st.selectbox(
+        "朗读速度",
+        options=list(speed_options.keys()),
+        index=4,  # Default to 1.5X
+        label_visibility="visible"
+    )
 
 # 添加页脚
 st.markdown("---")
 st.markdown("""
-### 使用说明
+#### 使用说明
 1. 输入 YouTube 视频链接
 2. 点击开始翻译按钮
 3. 等待翻译完成后查看结果

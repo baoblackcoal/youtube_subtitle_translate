@@ -98,6 +98,12 @@ if translate_button:
                     encoding='utf-8'
                 )
                 
+                # 在浏览器中显示翻译过程的日志
+                st.write("翻译过程日志：")
+                st.code(f"标准输出: {result.stdout}")
+                st.code(f"标准错误: {result.stderr}")
+                st.code(f"返回码: {result.returncode}")
+                
                 if result.returncode == 0:
                     translation = read_translation_result()
                     if translation:                        

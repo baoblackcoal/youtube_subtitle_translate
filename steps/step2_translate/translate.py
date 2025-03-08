@@ -38,10 +38,15 @@ def translate_text(text):
         data = {
             "contents": [{
                 "parts":[{
-                    "text": f"""Please translate the following English text to Simplified Chinese. 
-Keep the same format and line breaks. Only provide the translation, no explanations:
+                    "text": f"""
+Please translate the following <content></content> text to Simplified Chinese. 
+Add punctuation and paragraph breaks to make the content easier to read. 
+Only provide the translation, no explanations.
 
-{text}"""
+<content>
+{text}
+</content>
+"""
                 }]
             }]
         }

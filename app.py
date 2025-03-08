@@ -2,6 +2,17 @@ import streamlit as st
 import subprocess
 import os
 import re
+import json
+import logging
+from streamlit.components.v1 import html
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def escape_text_for_js(text: str) -> str:
+    """Escape text for safe use in JavaScript string."""
+    return json.dumps(text)[1:-1]  # Remove the outer quotes that json.dumps adds
 
 def is_valid_youtube_url(url):
     # YouTube URL patterns
@@ -40,7 +51,7 @@ st.markdown("##### YouTube 字幕翻译成中文 🎥")
 
 
 # 输入 YouTube URL
-col1, col2, col3 = st.columns([6, 3, 3])
+col1, col2, col3 = st.columns([9, 3, 3])
 with col1:
     youtube_url = st.text_input(
         "输入视频链接",
@@ -50,6 +61,9 @@ with col1:
 with col2:
     translate_button = st.button("开始翻译", type="primary", use_container_width=True)
 
+with col3:
+    read_checkbox = st.checkbox("朗读", value=True)
+    
 if translate_button:
     if not youtube_url:
         youtube_url = "https://www.youtube.com/watch?v=GiEsyOyk1m4"
@@ -76,6 +90,20 @@ if translate_button:
                             value=translation,
                             height=400
                         )
+
+                        if read_checkbox:
+                            text = escape_text_for_js(translation)
+                            js_code = f"""
+                                <script>
+                                    function speak() {{
+                                        const utterance = new SpeechSynthesisUtterance("{text}");
+                                        utterance.lang = 'zh-CN';
+                                        window.speechSynthesis.speak(utterance);
+                                    }}
+                                    speak();
+                                </script>
+                            """
+                            html(js_code)
                         
                         # 提供下载按钮
                         st.download_button(
@@ -95,6 +123,8 @@ if translate_button:
                         st.error("翻译失败，请确保视频有英文字幕")
             except Exception as e:
                 st.error(f"发生错误：{str(e)}")
+
+
 
 # 添加页脚
 st.markdown("---")

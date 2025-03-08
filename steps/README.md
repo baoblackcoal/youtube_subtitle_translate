@@ -14,6 +14,10 @@
 ```bash
 python main.py @VIDEO_ID
 ```
+或
+```bash
+python main.py "VIDEO_URL"
+```
 
 例如：
 ```bash

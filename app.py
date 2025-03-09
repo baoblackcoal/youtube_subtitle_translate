@@ -84,9 +84,9 @@ with col3:
 
     
 if translate_button:
-    #exec install requests
-    a = subprocess.run(['pip', 'install', 'requests'])
-    st.write(a)
+    # #exec install requests
+    # a = subprocess.run(['pip', 'install', 'requests'])
+    # st.write(a)
 
     if not youtube_url:
         youtube_url = "https://www.youtube.com/watch?v=GiEsyOyk1m4"

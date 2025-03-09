@@ -5,8 +5,8 @@ import json
 import time
 
 # 设置代理
-os.environ['HTTP_PROXY'] = 'http://192.168.1.16:10811'
-os.environ['HTTPS_PROXY'] = 'http://192.168.1.16:10811'
+# os.environ['HTTP_PROXY'] = 'http://192.168.1.16:10811'
+# os.environ['HTTPS_PROXY'] = 'http://192.168.1.16:10811'
 
 # 配置API密钥
 API_KEY = "AIzaSyAWCkwGlec6ECgm_r5PkQxEJjqFEs8E36o"
@@ -59,7 +59,8 @@ Only provide the translation, no explanations.
         
         # 发送请求
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(API_URL, headers=headers, json=data, proxies=proxies)
+        # response = requests.post(API_URL, headers=headers, json=data, proxies=proxies)
+        response = requests.post(API_URL, headers=headers, json=data)
         
         # 检查响应状态
         response.raise_for_status()

@@ -137,13 +137,32 @@ if translate_button:
 
                         # 提供下载按钮
                         video_title = get_video_title()
-                        st.download_button(
+                        download_button = st.download_button(
                             label="下载字幕",
                             data=translation,
                             file_name=f"{video_title}.txt",
                             mime="text/plain",
-                            use_container_width=True
+                            use_container_width=True,
+                            key="download_button"
                         )
+
+                        if auto_download_checkbox:
+                            js_code = """
+                            <script>
+                                // Wait for the page to fully load
+                                window.addEventListener('load', function() {
+                                    // Find the download button by its key and click it
+                                    const buttons = window.parent.document.querySelectorAll('button');
+                                    for (const button of buttons) {
+                                        if (button.innerText === '下载字幕') {
+                                            button.click();
+                                            break;
+                                        }
+                                    }
+                                });
+                            </script>
+                            """
+                            html(js_code)
 
                         if read_checkbox:
                             text = escape_text_for_js(translation)

@@ -14,6 +14,21 @@ def escape_text_for_js(text: str) -> str:
     """Escape text for safe use in JavaScript string."""
     return json.dumps(text)[1:-1]  # Remove the outer quotes that json.dumps adds
 
+def get_video_title() -> str:
+    """Get video title from saved info, or return default name if not found."""
+    try:
+        with open('steps/step1_download/output/video_info.json', 'r', encoding='utf-8') as f:
+            info = json.load(f)
+            # Clean the title to make it suitable for a filename
+            title = info['title']
+            # Remove invalid filename characters
+            title = re.sub(r'[<>:"/\\|?*]', '', title)
+            # Limit length
+            title = title[:100]  # Limit to 100 characters
+            return title
+    except (FileNotFoundError, json.JSONDecodeError, KeyError):
+        return "subtitle"
+
 def is_valid_youtube_url(url):
     # YouTube URL patterns
     patterns = [
@@ -116,10 +131,11 @@ if translate_button:
 
 
                         # 提供下载按钮
+                        video_title = get_video_title()
                         st.download_button(
                             label="下载字幕",
                             data=translation,
-                            file_name="subtitle_cn.txt",
+                            file_name=f"{video_title}.txt",
                             mime="text/plain",
                             use_container_width=True
                         )

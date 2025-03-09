@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import json
 from convert_vtt_to_txt import convert_vtt_to_txt
 
 def download_subtitles(url):
@@ -11,6 +12,22 @@ def download_subtitles(url):
     # delete all files in the output directory
     for file in os.listdir(output_dir):
         os.remove(os.path.join(output_dir, file))
+    
+    # First get video title
+    title_cmd = [
+        'yt-dlp',
+        '--skip-download',
+        '--get-title',
+        url
+    ]
+    
+    title_result = subprocess.run(title_cmd, capture_output=True, text=True)
+    if title_result.returncode == 0:
+        video_title = title_result.stdout.strip()
+        # Save title to a json file
+        title_file = os.path.join(output_dir, 'video_info.json')
+        with open(title_file, 'w', encoding='utf-8') as f:
+            json.dump({'title': video_title}, f, ensure_ascii=False)
     
     # Prepare the yt-dlp command
     cmd = [

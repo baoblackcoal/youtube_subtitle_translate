@@ -80,8 +80,16 @@ with col2:
 with col3:
     read_checkbox = st.checkbox("朗读", value=True)
 
+
+
     
 if translate_button:
+    #exec install requests
+    a = subprocess.run(['pip', 'install', 'requests'])
+    html("""<script>console.log('安装requests');
+         console.log('安装requests结果:', {json.dumps(a)});
+         </script>""")
+
     if not youtube_url:
         youtube_url = "https://www.youtube.com/watch?v=GiEsyOyk1m4"
     

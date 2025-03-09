@@ -104,18 +104,6 @@ if translate_button:
                     encoding='utf-8'
                 )
                 
-                # 在浏览器控制台显示日志
-                debug_js = f"""
-                    <script>
-                        console.group('翻译过程日志');
-                        console.log('标准输出:', {json.dumps(result.stdout)});
-                        console.log('标准错误:', {json.dumps(result.stderr)});
-                        console.log('返回码:', {json.dumps(result.returncode)});
-                        console.groupEnd();
-                    </script>
-                """
-                html(debug_js)
-                
                 if result.returncode == 0:
                     translation = read_translation_result()
                     if translation:                        
@@ -125,6 +113,7 @@ if translate_button:
                             height=400
                         )
                         st.success("翻译完成")
+
 
                         # 提供下载按钮
                         st.download_button(
@@ -160,8 +149,22 @@ if translate_button:
                         st.error("该视频没有可用的英文字幕")
                     else:
                         st.error("翻译失败，请确保视频有英文字幕")
+
+                # 在浏览器控制台显示日志
+                debug_js = f"""
+                    <script>
+                        console.group('翻译过程日志');
+                        console.log('标准输出:', {json.dumps(result.stdout)});
+                        console.log('标准错误:', {json.dumps(result.stderr)});
+                        console.log('返回码:', {json.dumps(result.returncode)});
+                        console.groupEnd();
+                    </script>
+                """
+                html(debug_js)
+
             except Exception as e:
                 st.error(f"发生错误：{str(e)}")
+
 
 st.markdown("---")
 st.markdown("""#### 设置""")

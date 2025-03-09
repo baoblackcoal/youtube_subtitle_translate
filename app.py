@@ -97,7 +97,7 @@ with col3:
     auto_download_checkbox = st.checkbox("自动下载", value=True)
 
 with col4:
-    read_checkbox = st.checkbox("朗读", value=False)
+    summary_checkbox = st.checkbox("总结", value=False)
     
     
 
@@ -162,24 +162,7 @@ if translate_button:
                                 });
                             </script>
                             """
-                            html(js_code)
-
-                        if read_checkbox:
-                            text = escape_text_for_js(translation)
-                            speed_value = speed_options[st.session_state.speed]
-                            js_code = f"""
-                                <script>
-                                    function speak() {{
-                                        const utterance = new SpeechSynthesisUtterance("{text}");
-                                        utterance.lang = 'zh-CN';
-                                        utterance.rate = {speed_value};
-                                        window.speechSynthesis.speak(utterance);
-                                    }}
-                                    speak();
-                                </script>
-                            """
-                            html(js_code)
-                        
+                            html(js_code)                        
                         
                     else:
                         st.warning("翻译失败，请重试")
@@ -206,15 +189,9 @@ if translate_button:
                 st.error(f"发生错误：{str(e)}")
 
 
-st.markdown("---")
-st.markdown("""#### 设置""")
-if read_checkbox:    
-    st.session_state.speed = st.selectbox(
-        "朗读速度",
-        options=list(speed_options.keys()),
-        index=4,  # Default to 1.5X
-        label_visibility="visible"
-    )
+# st.markdown("---")
+# st.markdown("""#### 设置""")
+
 
 # 添加页脚
 st.markdown("---")

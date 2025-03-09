@@ -45,6 +45,7 @@ def download_subtitles(url):
     
     # Run the command
     result = subprocess.run(cmd, capture_output=True, text=True)
+    print(result)
     
     if result.returncode != 0:
         print("Error downloading subtitles:")

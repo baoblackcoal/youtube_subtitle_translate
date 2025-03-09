@@ -7,6 +7,10 @@ def download_subtitles(url):
     # Create output directory if it doesn't exist
     output_dir = os.path.join(os.path.dirname(__file__), 'output')
     os.makedirs(output_dir, exist_ok=True)
+
+    # delete all files in the output directory
+    for file in os.listdir(output_dir):
+        os.remove(os.path.join(output_dir, file))
     
     # Prepare the yt-dlp command
     cmd = [

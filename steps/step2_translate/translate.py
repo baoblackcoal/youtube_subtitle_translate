@@ -83,6 +83,11 @@ def main():
     # 设置输入输出路径
     input_file = os.path.normpath(os.path.join(current_dir, "..", "step1_download", "output", "sub.en.txt"))
     output_file = os.path.normpath(os.path.join(current_dir, "output", "sub.cn.txt"))
+
+    # delete all files in the output directory
+    output_dir = os.path.dirname(output_file)
+    for file in os.listdir(output_dir):
+        os.remove(os.path.join(output_dir, file))
     
     # 检查输入文件是否存在
     if not os.path.exists(input_file):

@@ -82,7 +82,7 @@ st.markdown("##### YouTube 字幕翻译成中文 🎥")
 
 
 # 输入 YouTube URL
-col1, col2, col3 = st.columns([9, 3, 3])
+col1, col2 = st.columns([9, 3])
 with col1:
     youtube_url = st.text_input(
         "输入视频链接",
@@ -92,9 +92,14 @@ with col1:
 with col2:
     translate_button = st.button("开始翻译", type="primary", use_container_width=True)
 
+col3, col4, col5 = st.columns([3, 3, 3])
 with col3:
-    read_checkbox = st.checkbox("朗读", value=True)
+    auto_download_checkbox = st.checkbox("自动下载", value=True)
 
+with col4:
+    read_checkbox = st.checkbox("朗读", value=False)
+    
+    
 
 
     

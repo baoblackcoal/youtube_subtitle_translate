@@ -6,6 +6,11 @@ import json
 import logging
 from streamlit.components.v1 import html
 
+result = None
+auto_down_load = False
+if 'translation' not in st.session_state:
+    st.session_state.translation = None
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -126,71 +131,42 @@ if translate_button:
                 
                 if result.returncode == 0:
                     translation = read_translation_result()
-                    if translation:                        
-                        st.text_area(
-                            label="译文",
-                            value=translation,
-                            height=400
-                        )
+                    if translation:
                         st.success("翻译完成")
-
-
-                        # 提供下载按钮
-                        video_title = get_video_title()
-                        download_button = st.download_button(
-                            label="下载字幕",
-                            data=translation,
-                            file_name=f"{video_title}.txt",
-                            mime="text/plain",
-                            use_container_width=True,
-                            key="download_button"
-                        )
-
-                        if auto_download_checkbox:
-                            js_code = """
-                            <script>
-                                // Wait for the page to fully load
-                                window.addEventListener('load', function() {
-                                    // Find the download button by its key and click it
-                                    const buttons = window.parent.document.querySelectorAll('button');
-                                    for (const button of buttons) {
-                                        if (button.innerText === '下载字幕') {
-                                            button.click();
-                                            break;
-                                        }
-                                    }
-                                });
-                            </script>
-                            """
-                            html(js_code)                        
-                        
+                        st.session_state.translation = translation
+                        auto_down_load = True
                     else:
                         st.warning("翻译失败，请重试")
+                    
                 else:
                     error_msg = result.stderr.strip()
                     if "No subtitles available" in error_msg:
                         st.error("该视频没有可用的英文字幕")
                     else:
-                        st.error("翻译失败，请确保视频有英文字幕")
-
-                # 在浏览器控制台显示日志
-                debug_js = f"""
-                    <script>
-                        console.group('翻译过程日志');
-                        console.log('标准输出:', {json.dumps(result.stdout)});
-                        console.log('标准错误:', {json.dumps(result.stderr)});
-                        console.log('返回码:', {json.dumps(result.returncode)});
-                        console.groupEnd();
-                    </script>
-                """
-                html(debug_js)
+                        st.error("翻译失败，请确保视频有英文字幕")         
 
             except Exception as e:
                 st.error(f"发生错误：{str(e)}")
 
 
-# st.markdown("---")
-# st.markdown("""#### 设置""")
+if st.session_state.translation: 
+    translation1 = st.session_state.translation
+    st.text_area(
+        label="译文",
+        value=translation1,
+        height=400
+    )
+
+    # 提供下载按钮
+    video_title = get_video_title()
+    download_button = st.download_button(
+        label="下载字幕",
+        data=translation1,
+        file_name=f"{video_title}.txt",
+        mime="text/plain",
+        use_container_width=True,
+        key="download_button"
+    )
 
 
 # 添加页脚
@@ -207,3 +183,35 @@ st.markdown("""
 - 确保视频链接格式正确
 """)
 st.caption("💡 使用 Google Gemini API 提供翻译服务") 
+
+
+if auto_down_load: 
+    js_code = """
+        <script>
+            // Wait for the page to fully load
+            window.addEventListener('load', function() {
+                // Find the download button by its key and click it
+                const buttons = window.parent.document.querySelectorAll('button');
+                for (const button of buttons) {
+                    if (button.innerText === '下载字幕') {
+                        button.click();
+                        break;
+                    }
+                }
+            });
+        </script>
+        """
+    html(js_code)                    
+
+# 在浏览器控制台显示日志
+if result:
+    debug_js = f"""
+            <script>
+                console.group('翻译过程日志');
+            console.log('标准输出:', {json.dumps(result.stdout)});
+            console.log('标准错误:', {json.dumps(result.stderr)});
+            console.log('返回码:', {json.dumps(result.returncode)});
+            console.groupEnd();
+        </script>
+    """
+    html(debug_js)

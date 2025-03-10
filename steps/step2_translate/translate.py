@@ -53,7 +53,6 @@ Summary requirements:
 Translation requirements:
 1. Add punctuation and paragraph breaks to make the content easier to read. 
 
-
 <output>
 summary_title
 summary_content

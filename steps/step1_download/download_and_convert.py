@@ -135,6 +135,10 @@ def main():
     output_dir = os.path.join(os.path.dirname(__file__), "output")
     os.makedirs(output_dir, exist_ok=True)
 
+    # delete all files in the output directory
+    for file in os.listdir(output_dir):
+        os.remove(os.path.join(output_dir, file))
+
     print(f"\nAttempting to download subtitles for: {url}")
     print(f"Output directory: {output_dir}")
 

@@ -39,13 +39,31 @@ def translate_text(text):
             "contents": [{
                 "parts":[{
                     "text": f"""
-Please translate the following <content></content> text to Simplified Chinese. 
-Add punctuation and paragraph breaks to make the content easier to read. 
-Only provide the translation, no explanations.
+Please summarize and translate the following <source_text></source_text> text to Simplified Chinese. 
 
-<content>
+Output format requirements:
+1. Only provide the translation, no explanations.
+2. output format must be like <output></output>.
+
+Summary requirements:
+1. summary_title should be concise and to the point.
+2. summary_content should be concise and to the point, no more than 100 words.
+3. summary_highlights should be 5~10 sentences, with numbers in the beginning of each sentence, highlight the main points of the text.
+
+Translation requirements:
+1. Add punctuation and paragraph breaks to make the content easier to read. 
+
+
+<output>
+summary_title
+summary_content
+summary_highlights
+translation_content
+</output>
+
+<source_text>
 {text}
-</content>
+</source_text>
 """
                 }]
             }]
@@ -101,6 +119,17 @@ def main():
     # 翻译内容
     print("Translating to Chinese...")
     chinese_text = translate_text(english_text)
+
+    # delete <output> and </output> in the response
+    chinese_text = chinese_text.replace("<output>", "").replace("</output>", "")
+    # change summary_title to 标题
+    chinese_text = chinese_text.replace("summary_title", "标题")
+    # change summary_content to 总结
+    chinese_text = chinese_text.replace("summary_content", "总结")
+    # change summary_highlights to 亮点
+    chinese_text = chinese_text.replace("summary_highlights", "亮点")
+    # change translation_content to 字幕翻译
+    chinese_text = chinese_text.replace("translation_content", "字幕翻译")
     
     # 保存翻译结果
     print("Saving Chinese translation...")
